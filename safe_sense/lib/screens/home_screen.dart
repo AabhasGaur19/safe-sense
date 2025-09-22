@@ -1,3 +1,4 @@
+// lib/screens/home_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Session> _sessionLogs = [];
   bool _isLoading = false;
 
-  // SOS state management
   List<SOSContact> _sosContacts = [];
   bool _isSosCountdownActive = false;
   int _countdownValue = 5;
@@ -38,16 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // SOS Logic
   void _startSosCountdown() {
     if (_sosContacts.isEmpty) {
-      showMessage(context, "Please add at least one SOS contact first.");
+      // showMessage(context, "Please add at least one SOS contact first.");
+      showMessage(context, "Please add at least one SOS contact first.", type: MessageType.info);
       return;
     }
-
     setState(() => _isSosCountdownActive = true);
-
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
       setState(() => _countdownValue--);
       if (_countdownValue == 0) {
         timer.cancel();
@@ -62,7 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _isSosCountdownActive = false;
       _countdownValue = 5;
     });
-    showMessage(context, "SOS Canceled", color: Colors.blueGrey);
+    // showMessage(context, "SOS Canceled", color: Colors.blueGrey);
+    showMessage(context, "SOS Canceled", type: MessageType.info);
   }
 
   Future<void> _sendSms() async {
@@ -79,23 +82,22 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       if (await canLaunchUrl(smsUri)) {
         await launchUrl(smsUri);
-        setState(() {
-          _isSosCountdownActive = false;
-          _countdownValue = 5;
-        });
       } else {
         throw 'Could not launch SMS app.';
       }
     } catch (e) {
-      showMessage(context, 'Error sending SOS: ${e.toString()}');
-      setState(() {
-        _isSosCountdownActive = false;
-        _countdownValue = 5;
-      });
+      // if (mounted) showMessage(context, 'Error sending SOS: ${e.toString()}');
+      if (mounted) showMessage(context, 'Error sending SOS: ${e.toString()}', type: MessageType.error);
+    } finally {
+      if (mounted) {
+         setState(() {
+          _isSosCountdownActive = false;
+          _countdownValue = 5;
+        });
+      }
     }
   }
 
-  // Session Logic
   void _toggleSession() async {
     setState(() => _isLoading = true);
     try {
@@ -110,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
             endLocation: "",
           );
         });
-        showMessage(context, "Session started!", color: Colors.green);
+        // showMessage(context, "Session started!", color: Colors.green);
+        showMessage(context, "Session started!", type: MessageType.success);
       } else {
         final endTime = DateTime.now();
         final endLocation = await getCurrentLocation();
@@ -124,12 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
           _sessionLogs.insert(0, completedSession);
           _currentSession = null;
         });
-        showMessage(context, "Session logged successfully!", color: Colors.blue);
+        // showMessage(context, "Session logged successfully!", color: Colors.blue);
+        showMessage(context, "Session logged successfully!", type: MessageType.success);
       }
     } catch (e) {
-      showMessage(context, e.toString());
+      // showMessage(context, e.toString());
+      showMessage(context, e.toString(), type: MessageType.error);
     } finally {
-      setState(() => _isLoading = false);
+      if(mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -147,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _sosContacts = updatedContacts;
       });
-      showMessage(context, "Contacts updated!", color: Colors.blue);
+      // showMessage(context, "Contacts updated!", color: Colors.blue);
+      showMessage(context, "Contacts updated!", type: MessageType.success);
     }
   }
 
@@ -181,15 +187,29 @@ class _HomeScreenState extends State<HomeScreen> {
         return Stack(
           children: [
             Scaffold(
+              extendBodyBehindAppBar: true,
               appBar: AppBar(
                 title: Text('${getGreeting()}, $userName'),
-                backgroundColor: Colors.white,
-                elevation: 0,
-                foregroundColor: Colors.black,
+                backgroundColor: Colors.transparent,
                 actions: [
-                  IconButton(
-                    onPressed: () async => await auth.signOut(),
-                    icon: const Icon(Icons.logout),
+                  Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async => await auth.signOut(),
+                      icon: const Icon(Icons.logout_rounded),
+                      iconSize: 20,
+                    ),
                   )
                 ],
               ),
@@ -198,48 +218,113 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        FloatingActionButton.small(
-                          onPressed: () => _navigateAndManageContacts(context),
-                          tooltip: 'Add SOS Contacts',
-                          child: const Icon(Icons.contact_emergency),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: FloatingActionButton.small(
+                            onPressed: () => _navigateAndManageContacts(context),
+                            backgroundColor: Colors.white,
+                            foregroundColor: Theme.of(context).primaryColor,
+                            elevation: 0,
+                            heroTag: "contacts",
+                            child: const Icon(Icons.contacts_rounded),
+                          ),
                         ),
                         const SizedBox(height: 16),
-                        FloatingActionButton(
-                          onPressed: _startSosCountdown,
-                          backgroundColor: Colors.indigo,
-                          tooltip: 'Activate SOS',
-                          child: const Icon(Icons.sos_outlined, color: Colors.white),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).colorScheme.error.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: FloatingActionButton(
+                            onPressed: _startSosCountdown,
+                            backgroundColor: Theme.of(context).colorScheme.error,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            heroTag: "sos",
+                            child: const Icon(Icons.emergency, size: 28),
+                          ),
                         ),
                       ],
                     )
                   : null,
-              bottomNavigationBar: BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                  BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Logs'),
-                  BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-                ],
-                currentIndex: _selectedIndex,
-                selectedItemColor: Colors.indigo,
-                onTap: _onItemTapped,
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home_rounded),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.history_rounded),
+                      label: 'Logs',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings_rounded),
+                      label: 'Settings',
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                ),
               ),
             ),
-            // Countdown overlay
             if (_isSosCountdownActive)
               Container(
-                color: Colors.black.withOpacity(0.8),
+                color: Colors.black.withOpacity(0.9),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        _countdownValue > 0 ? "$_countdownValue" : "SOS\nSENT",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 120,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
+                      Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.5),
+                              blurRadius: 50,
+                              spreadRadius: 20,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            _countdownValue > 0 ? "$_countdownValue" : "SENT",
+                            style: const TextStyle(
+                              fontSize: 60,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.none,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -248,10 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                           ),
                           onPressed: _cancelSosCountdown,
-                          child: const Text("Cancel", style: TextStyle(fontSize: 20)),
+                          child: const Text("Cancel", style: TextStyle(fontSize: 18)),
                         ),
                     ],
                   ),

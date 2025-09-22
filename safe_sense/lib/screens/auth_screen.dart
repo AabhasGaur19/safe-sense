@@ -1,10 +1,135 @@
+// // lib/screens/auth_screen.dart
+// import 'package:flutter/material.dart';
+// import '../widgets/login_view.dart';
+// import '../widgets/signup_view.dart';
+
+// class AuthScreen extends StatefulWidget {
+//   const AuthScreen({super.key});
+
+//   @override
+//   State<AuthScreen> createState() => _AuthScreenState();
+// }
+
+// class _AuthScreenState extends State<AuthScreen> {
+//   final PageController _pageController = PageController();
+//   bool _isLogin = true;
+
+//   void togglePage() {
+//     setState(() => _isLogin = !_isLogin);
+//     _pageController.animateToPage(
+//       _isLogin ? 0 : 1,
+//       duration: const Duration(milliseconds: 400),
+//       curve: Curves.easeInOut,
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [Color(0xFF2196F3), Color(0xFF21CBF3)],
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//           ),
+//         ),
+//         child: SafeArea(
+//           child: Center(
+//             child: SingleChildScrollView(
+//               padding: const EdgeInsets.all(24),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Container(
+//                     width: 120,
+//                     height: 120,
+//                     decoration: BoxDecoration(
+//                       color: Colors.white.withOpacity(0.2),
+//                       borderRadius: BorderRadius.circular(30),
+//                     ),
+//                     child: const Icon(
+//                       Icons.shield_rounded,
+//                       size: 60,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 32),
+//                   const Text(
+//                     "SafeSense",
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 36,
+//                       fontWeight: FontWeight.bold,
+//                       shadows: [
+//                         Shadow(
+//                           blurRadius: 10.0,
+//                           color: Color.fromRGBO(0, 0, 0, 0.3),
+//                           offset: Offset(0, 2),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                   // ✅ Conditionally show subtitle ONLY on the login screen
+//                   if (_isLogin)
+//                     Padding(
+//                       padding: const EdgeInsets.only(top: 8.0),
+//                       child: Text(
+//                         "Welcome back to safety",
+//                         style: TextStyle(
+//                           color: Colors.white.withOpacity(0.9),
+//                           fontSize: 16,
+//                         ),
+//                       ),
+//                     ),
+//                   const SizedBox(height: 48),
+//                   Container(
+//                     width: double.infinity,
+//                     constraints: const BoxConstraints(maxWidth: 400),
+//                     padding: const EdgeInsets.all(32),
+//                     decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius: BorderRadius.circular(24),
+//                       boxShadow: [
+//                         BoxShadow(
+//                           color: Colors.black.withOpacity(0.1),
+//                           blurRadius: 20,
+//                           offset: const Offset(0, 10),
+//                         ),
+//                       ],
+//                     ),
+//                     child: SizedBox(
+//                       height: _isLogin ? 320 : 400,
+//                       child: PageView(
+//                         controller: _pageController,
+//                         physics: const NeverScrollableScrollPhysics(),
+//                         children: [
+//                           LoginView(togglePage: togglePage),
+//                           SignUpView(togglePage: togglePage),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+// lib/screens/auth_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/login_view.dart';
 import '../widgets/signup_view.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
-  
+
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
@@ -12,7 +137,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final PageController _pageController = PageController();
   bool _isLogin = true;
-  
+
   void togglePage() {
     setState(() => _isLogin = !_isLogin);
     _pageController.animateToPage(
@@ -21,54 +146,84 @@ class _AuthScreenState extends State<AuthScreen> {
       curve: Curves.easeInOut,
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+            colors: [Color(0xFF2196F3), Color(0xFF21CBF3)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                const Icon(Icons.shield_outlined, size: 100, color: Colors.white),
+                // Compact logo section
                 const SizedBox(height: 20),
-                Text(
-                  _isLogin ? "Welcome Back" : "Create Account",
-                  style: const TextStyle(
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.shield_rounded,
+                    size: 40,
                     color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  _isLogin ? "Login to continue" : "Sign up to start your journey",
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
-                ),
-                const SizedBox(height: 30),
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
+                const SizedBox(height: 12),
+                const Text(
+                  "SafeSense",
+                  style: TextStyle(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 20,
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(0, 8),
-                      )
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.3),
+                        offset: Offset(0, 2),
+                      ),
                     ],
                   ),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.55,
+                ),
+                if (_isLogin)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      "Welcome back to safety",
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                
+                // Expanded form container
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
                     child: PageView(
                       controller: _pageController,
                       physics: const NeverScrollableScrollPhysics(),
@@ -79,6 +234,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
