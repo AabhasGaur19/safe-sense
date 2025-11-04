@@ -18,29 +18,37 @@ class LogsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700;
+    
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.06,
+              vertical: isSmallScreen ? 16 : 20,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 40),
+                SizedBox(height: isSmallScreen ? 16 : 24),
                 Text(
                   "Session History",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: isSmallScreen ? 24 : 28,
                     color: const Color(0xFF1A1A1A),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   "${sessionLogs.length} sessions recorded",
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -53,50 +61,57 @@ class LogsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 100,
-                          height: 100,
+                          width: isSmallScreen ? 80 : 90,
+                          height: isSmallScreen ? 80 : 90,
                           decoration: BoxDecoration(
                             color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: Icon(
                             Icons.history_rounded,
-                            size: 50,
+                            size: isSmallScreen ? 40 : 45,
                             color: Colors.grey[400],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: isSmallScreen ? 18 : 22),
                         Text(
                           'No Sessions Yet',
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             color: Colors.grey[600],
+                            fontSize: isSmallScreen ? 18 : 20,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Text(
                           'Start your first session to see it here',
-                          style: TextStyle(color: Colors.grey[500]),
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.06,
+                      vertical: 8,
+                    ),
                     itemCount: sessionLogs.length,
                     itemBuilder: (context, index) {
                       final session = sessionLogs[index];
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(20),
+                        margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 14),
+                        padding: EdgeInsets.all(isSmallScreen ? 16 : 18),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -106,102 +121,109 @@ class LogsPage extends StatelessWidget {
                             Row(
                               children: [
                                 Container(
-                                  width: 50,
-                                  height: 50,
+                                  width: isSmallScreen ? 44 : 48,
+                                  height: isSmallScreen ? 44 : 48,
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
                                     Icons.timer_rounded,
                                     color: Theme.of(context).primaryColor,
-                                    size: 24,
+                                    size: isSmallScreen ? 20 : 22,
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(width: isSmallScreen ? 12 : 14),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         DateFormat('MMMM dd, yyyy').format(session.startTime),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Color(0xFF1A1A1A),
+                                          fontSize: isSmallScreen ? 14 : 15,
+                                          color: const Color(0xFF1A1A1A),
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
+                                      const SizedBox(height: 2),
                                       Text(
                                         "${DateFormat.jm().format(session.startTime)} - ${DateFormat.jm().format(session.endTime)}",
                                         style: TextStyle(
                                           color: Colors.grey[600],
-                                          fontSize: 14,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isSmallScreen ? 10 : 12,
+                                    vertical: isSmallScreen ? 4 : 5,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
                                     _formatDuration(session.duration),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(context).colorScheme.secondary,
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: isSmallScreen ? 12 : 14),
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(isSmallScreen ? 12 : 14),
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
                                 children: [
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.location_on_outlined,
-                                        size: 16,
+                                        size: 14,
                                         color: Colors.grey[600],
                                       ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: 6),
                                       Expanded(
                                         child: Text(
                                           "From: ${session.startLocation}",
                                           style: TextStyle(
                                             color: Colors.grey[700],
-                                            fontSize: 14,
+                                            fontSize: 12,
+                                            height: 1.3,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.flag_outlined,
-                                        size: 16,
+                                        size: 14,
                                         color: Colors.grey[600],
                                       ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: 6),
                                       Expanded(
                                         child: Text(
                                           "To: ${session.endLocation}",
                                           style: TextStyle(
                                             color: Colors.grey[700],
-                                            fontSize: 14,
+                                            fontSize: 12,
+                                            height: 1.3,
                                           ),
                                         ),
                                       ),

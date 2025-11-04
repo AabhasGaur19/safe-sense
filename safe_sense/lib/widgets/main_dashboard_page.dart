@@ -17,66 +17,24 @@ class MainDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700;
+    
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.06,
+          vertical: isSmallScreen ? 12 : 16,
+        ),
         child: Column(
           children: [
-            const SizedBox(height: 40),
-            if (userData != null)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: 30,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      userData!['name'] ?? 'User',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Age: ${userData!['age']}",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            const Spacer(),
+            SizedBox(height: isSmallScreen ? 16 : 24),
+            // Profile card section removed
+            const Spacer(flex: 2),
             Container(
-              width: 220,
-              height: 220,
+              width: isSmallScreen ? 180 : 200,
+              height: isSmallScreen ? 180 : 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -91,9 +49,9 @@ class MainDashboardPage extends StatelessWidget {
                     color: isSessionActive 
                         ? Colors.green.withOpacity(0.3)
                         : Theme.of(context).primaryColor.withOpacity(0.3),
-                    blurRadius: 30,
-                    spreadRadius: 10,
-                    offset: const Offset(0, 10),
+                    blurRadius: isSmallScreen ? 25 : 30,
+                    spreadRadius: isSmallScreen ? 8 : 10,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
@@ -107,7 +65,7 @@ class MainDashboardPage extends StatelessWidget {
                   : Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(110),
+                        borderRadius: BorderRadius.circular(isSmallScreen ? 90 : 100),
                         onTap: onToggleSession,
                         child: Center(
                           child: Column(
@@ -115,16 +73,17 @@ class MainDashboardPage extends StatelessWidget {
                             children: [
                               Icon(
                                 isSessionActive ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                                size: 50,
+                                size: isSmallScreen ? 42 : 48,
                                 color: Colors.white,
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: isSmallScreen ? 6 : 8),
                               Text(
                                 isSessionActive ? "STOP" : "START",
-                                style: const TextStyle(
-                                  fontSize: 20,
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 16 : 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
+                                  letterSpacing: 1,
                                 ),
                               ),
                             ],
@@ -133,14 +92,18 @@ class MainDashboardPage extends StatelessWidget {
                       ),
                     ),
             ),
-            const Spacer(),
+            const Spacer(flex: 3),
             Container(
-              padding: const EdgeInsets.all(20),
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                vertical: isSmallScreen ? 14 : 16,
+                horizontal: 20,
+              ),
               decoration: BoxDecoration(
                 color: isSessionActive 
                     ? Colors.green.withOpacity(0.1)
                     : Theme.of(context).primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -148,19 +111,21 @@ class MainDashboardPage extends StatelessWidget {
                   Icon(
                     isSessionActive ? Icons.fiber_manual_record : Icons.radio_button_unchecked,
                     color: isSessionActive ? Colors.green : Theme.of(context).primaryColor,
-                    size: 16,
+                    size: 14,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     isSessionActive ? "Session Active" : "Ready to Start",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
+                      fontSize: 14,
                       color: isSessionActive ? Colors.green : Theme.of(context).primaryColor,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: isSmallScreen ? 16 : 24),
           ],
         ),
       ),

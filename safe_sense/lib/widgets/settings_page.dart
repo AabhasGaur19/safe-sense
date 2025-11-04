@@ -1,34 +1,47 @@
 // lib/widgets/settings_page.dart
 import 'package:flutter/material.dart';
+import '../screens/settings/profile_page.dart';
+import '../screens/settings/notifications_page.dart';
+import '../screens/settings/privacy_security_page.dart';
+import '../screens/settings/help_support_page.dart';
+import '../screens/settings/about_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700;
+    
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.06,
+              vertical: isSmallScreen ? 16 : 20,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 40),
+                SizedBox(height: isSmallScreen ? 16 : 24),
                 Text(
                   "Settings",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: isSmallScreen ? 24 : 28,
                     color: const Color(0xFF1A1A1A),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   "Manage your preferences",
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -36,7 +49,10 @@ class SettingsPage extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.06,
+                vertical: 8,
+              ),
               children: [
                 _buildSettingsCard(
                   context,
@@ -44,49 +60,70 @@ class SettingsPage extends StatelessWidget {
                   title: "Profile",
                   subtitle: "Manage your personal information",
                   onTap: () {
-                    // TODO: Navigate to Profile Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProfilePage()),
+                    );
                   },
+                  isSmallScreen: isSmallScreen,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isSmallScreen ? 12 : 14),
                 _buildSettingsCard(
                   context,
                   icon: Icons.notifications_outlined,
                   title: "Notifications",
                   subtitle: "Configure alert preferences",
                   onTap: () {
-                    // TODO: Navigate to Notifications Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const NotificationsPage()),
+                    );
                   },
+                  isSmallScreen: isSmallScreen,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isSmallScreen ? 12 : 14),
                 _buildSettingsCard(
                   context,
                   icon: Icons.security_rounded,
                   title: "Privacy & Security",
                   subtitle: "Manage your data and security settings",
                   onTap: () {
-                    // TODO: Navigate to Privacy Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PrivacySecurityPage()),
+                    );
                   },
+                  isSmallScreen: isSmallScreen,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isSmallScreen ? 12 : 14),
                 _buildSettingsCard(
                   context,
                   icon: Icons.help_outline_rounded,
                   title: "Help & Support",
                   subtitle: "Get help and contact support",
                   onTap: () {
-                    // TODO: Navigate to Help Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpSupportPage()),
+                    );
                   },
+                  isSmallScreen: isSmallScreen,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isSmallScreen ? 12 : 14),
                 _buildSettingsCard(
                   context,
                   icon: Icons.info_outline_rounded,
                   title: "About",
                   subtitle: "App version and information",
                   onTap: () {
-                    // TODO: Navigate to About Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AboutPage()),
+                    );
                   },
+                  isSmallScreen: isSmallScreen,
                 ),
+                SizedBox(height: isSmallScreen ? 16 : 20),
               ],
             ),
           ),
@@ -101,59 +138,64 @@ class SettingsPage extends StatelessWidget {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required bool isSmallScreen,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(20),
+        contentPadding: EdgeInsets.all(isSmallScreen ? 16 : 18),
         leading: Container(
-          width: 50,
-          height: 50,
+          width: isSmallScreen ? 44 : 48,
+          height: isSmallScreen ? 44 : 48,
           decoration: BoxDecoration(
             color: Theme.of(context).primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             icon,
             color: Theme.of(context).primaryColor,
-            size: 24,
+            size: isSmallScreen ? 20 : 22,
           ),
         ),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Color(0xFF1A1A1A),
+            fontSize: isSmallScreen ? 14 : 15,
+            color: const Color(0xFF1A1A1A),
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 14,
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            subtitle,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 12,
+              height: 1.3,
+            ),
           ),
         ),
         trailing: Container(
-          width: 32,
-          height: 32,
+          width: isSmallScreen ? 28 : 30,
+          height: isSmallScreen ? 28 : 30,
           decoration: BoxDecoration(
             color: Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.arrow_forward_ios_rounded,
-            size: 16,
+            size: isSmallScreen ? 12 : 14,
             color: Colors.grey,
           ),
         ),
